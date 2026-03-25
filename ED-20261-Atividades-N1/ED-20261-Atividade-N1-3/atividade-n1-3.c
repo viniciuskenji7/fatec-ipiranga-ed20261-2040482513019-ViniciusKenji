@@ -20,6 +20,7 @@ typedef struct {
     int topo;
 } Pilha;
 
+// Iniciando pilha
 void inicializarPilha(Pilha pilha) {
     pilha.topo = -1;
     printf("Pilha inicializada com sucesso");
@@ -27,16 +28,38 @@ void inicializarPilha(Pilha pilha) {
 
 // Listando pilha
 void listarPilha(Pilha pilha) {
-    if (pilha.topo == -1) {
-        printf("A pilha está vazia");
-    }
+    if (pilhaVazia == 1) return pritnf("A pilha esta vazia");
     printf("Estes são os elementos da pilha: %d", pilha.data);
 }
 
-
-int calculadora(Pilha numeros, char op) {
-    
+// Verificação de pilha
+int pilhaVazia(Pilha pilha) {
+    if (pilha.topo == -1) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
+
+// Inserindo pilha
+void inserirPilha(Pilha pilha, int x) {
+    if (pilha.topo == MAX_LENGTH) return printf("A pilha esta cheia");
+    pilha.topo++;
+    pilha.data[pilha.topo] = x;
+}
+
+// Removendo pilha
+void removerPilha(Pilha *pilha) {
+    int aux;
+    if (pilhaVazia == 1) {
+        return;
+    } else {
+        aux = *pilha.data[*pilha.topo];
+        *pilha.topo--;
+    }
+}
+
+
 
 
 int main() {
