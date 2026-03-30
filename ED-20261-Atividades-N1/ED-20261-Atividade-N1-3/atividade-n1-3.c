@@ -11,6 +11,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_LENGTH 4
 
@@ -21,50 +22,63 @@ typedef struct {
 } Pilha;
 
 // Iniciando pilha
-void inicializarPilha(Pilha pilha) {
-    pilha.topo = -1;
-    printf("Pilha inicializada com sucesso");
-}
-
-// Listando pilha
-void listarPilha(Pilha pilha) {
-    if (pilhaVazia == 1) return pritnf("A pilha esta vazia");
-    printf("Estes são os elementos da pilha: %d", pilha.data);
+void inicializarPilha(Pilha *p) {
+    p->topo = -1;
+    printf("Pilha inicializada com sucesso\n");
 }
 
 // Verificação de pilha
-int pilhaVazia(Pilha pilha) {
-    if (pilha.topo == -1) {
+int pilhaVazia(Pilha *p) {
+    if (p->topo == -1) {
         return 1;
     } else {
         return 0;
     }
 }
 
-// Inserindo pilha
-void inserirPilha(Pilha pilha, int x) {
-    if (pilha.topo == MAX_LENGTH) return printf("A pilha esta cheia");
-    pilha.topo++;
-    pilha.data[pilha.topo] = x;
-}
-
-// Removendo pilha
-void removerPilha(Pilha *pilha) {
-    int aux;
-    if (pilhaVazia == 1) {
+// Listando pilha
+void listarPilha(Pilha *p) {
+    if (pilhaVazia(p)) {
+        printf("A pilha esta vazia\n");
         return;
-    } else {
-        aux = *pilha.data[*pilha.topo];
-        *pilha.topo--;
+    }
+    printf("Estes sao os elementos da pilha: \n");
+
+    for (int i = 0; i <= p->topo; i++) {
+        printf("%d\n", p->data[i]);
     }
 }
 
+// Inserindo pilha
+int push(Pilha *p, int x) {
+    if (p->topo == MAX_LENGTH - 1) {
+        printf("A pilha esta cheia\n");
+        return 0;
+    }
+    p->data[++p->topo] = x;
+    return 1;
+}
+
+// Removendo pilha
+int pop(Pilha *p, int *out) {
+    if (p->topo == -1) {
+        return 0;
+    }
+    *out = p->data[p->topo--];
+    return 1;
+}
 
 
 
 int main() {
 
-    printf("Ola mundo");
+    Pilha calculadora;
+    inicializarPilha(&calculadora);
+
+    char entrada[100];
+
+    printf("Digite a expressao RPN: \n");
+
 
     return 0;
 }
