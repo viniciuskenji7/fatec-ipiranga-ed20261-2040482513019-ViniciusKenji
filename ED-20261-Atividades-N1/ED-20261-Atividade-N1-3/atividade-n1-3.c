@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
 #define MAX_LENGTH 4
 
@@ -26,6 +28,7 @@ void inicializarPilha(Pilha *p) {
     p->topo = -1;
     printf("Pilha inicializada com sucesso\n");
 }
+
 
 // Verificação de pilha
 int pilhaVazia(Pilha *p) {
@@ -68,16 +71,50 @@ int pop(Pilha *p, int *out) {
     return 1;
 }
 
+// Verificar se é número
+int ehNumero(char *token) {
+    // Precisa implementar:
+    // - Verificar se o primeiro caractere é um dígito ou sinal de menos
+    // - Retornar 1 se for número, 0 se não
+    if (isdigit(token) == 0) {
+        return 0;
+    }
+    return 1;
+}
+
+//Executar operação
+int executarOperacao(Pilha *p, char operador) {
+    // - Precisa implementar:
+    // - Fazer pop de dois valores
+    // - Aplicar a operação (+, -, *, /)
+    // - Fazer push do resultado
+    // - Retornar 1 se sucesso, 0 se erro
+    
+}
+
 
 
 int main() {
 
-    Pilha calculadora;
-    inicializarPilha(&calculadora);
+    Pilha pilha;
+    inicializarPilha(&pilha);
 
     char entrada[100];
+    char *token;
 
-    printf("Digite a expressao RPN: \n");
+    pritnf("Digite a expressão NPR: \n");
+    fgets(entrada, 100, stdin);
+
+    token = strtok(entrada, " ");
+
+    while(token != NULL) {
+        if (ehNumero(token) == 0) {
+            switch(*token) {
+                case "+":
+                    pop()
+            }
+        }
+    }
 
 
     return 0;
