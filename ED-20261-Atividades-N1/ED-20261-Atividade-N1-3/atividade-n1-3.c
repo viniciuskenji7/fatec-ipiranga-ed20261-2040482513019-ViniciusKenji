@@ -1,122 +1,170 @@
+
+
+
+
 /*----------------------------------------------------------------------------------*/
 /* FATEC-Ipiranga                                    */        
-/* ADS - Estrutura de Dados                              */
-/* Id da Atividade: N1-3                      */
-/* Objetivo: Desenvolver uma aplicação que simule o funcionamento lógico da calculadora financeira HP12C, utilizando os conceitos de     /Estrutura de Dados de Pilha (Stack) para o processamento de expressões em Notação Polonesa Reversa. */
-/*                                                                                  */
-/*Autor: Vinicius Kenji dos Santos Enoki                     */
-/*                                                                   Data:25/03/2026*/
+/* ADS - Estrutura de Dados                          */
+/* Id da Atividade: N1-3                             */
+/* Objetivo: Simular HP12C com RPN usando pilha X,Y,Z,T */
+/* Autor: Vinicius Kenji dos Santos Enoki            */
+/* Data: 25/03/2026                                  */
 /*----------------------------------------------------------------------------------*/
-
-
 
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 #include <stdlib.h>
+#include <ctype.h>
 
-#define MAX_LENGTH 4
-
-// Tipo pilha
 typedef struct {
-    int data[MAX_LENGTH];
+    double X, Y, Z, T;
     int topo;
-} Pilha;
+} PilhaHP;
 
-// Iniciando pilha
-void inicializarPilha(Pilha *p) {
-    p->topo = -1;
-    printf("Pilha inicializada com sucesso\n");
+// Inicializa registradores
+void inicializar(PilhaHP *p) {
+    p->X = p->Y = p->Z = p->T = 0.0;
+    p->topo = 0;
 }
 
 
-// Verificação de pilha
-int pilhaVazia(Pilha *p) {
-    if (p->topo == -1) {
-        return 1;
-    } else {
-        return 0;
-    }
+// Exibe estado da pilha
+void mostrar(PilhaHP *p) {
+    printf("\n--- ESTADO DA PILHA ---\n");
+    printf("T: %.2lf\n", p->T);
+    printf("Z: %.2lf\n", p->Z);
+    printf("Y: %.2lf\n", p->Y);
+    printf("X: %.2lf   <-- DISPLAY\n", p->X);
+    printf("-----------------------\n");
 }
 
-// Listando pilha
-void listarPilha(Pilha *p) {
-    if (pilhaVazia(p)) {
-        printf("A pilha esta vazia\n");
+// Push no modelo HP12c
+void pushNumero(PilhaHP *p, double num) {
+    if (p->topo == 3) {
+        printf("\n-------------------O NUMERO EXCEDEU! DIGITE UMA OPERACAO-----------------------\n");
         return;
     }
-    printf("Estes sao os elementos da pilha: \n");
+    p->T = p->Z;
+    p->Z = p->Y;
+    p->Y = p->X;
+    p->X = num;
 
-    for (int i = 0; i <= p->topo; i++) {
-        printf("%d\n", p->data[i]);
-    }
+    p->topo++;
 }
 
-// Inserindo pilha
-int push(Pilha *p, int x) {
-    if (p->topo == MAX_LENGTH - 1) {
-        printf("A pilha esta cheia\n");
+// Verifica se há operandos suficientes
+int temOperandos(PilhaHP *p) {
+    // precisa pelo menos X e Y válidos
+    return !(p->X == 0 && p->Y == 0 && p->Z == 0 && p->T == 0);
+}
+
+// Executa operação
+int operar(PilhaHP *p, char op) {
+
+    if (!temOperandos(p)) {
+        printf("Erro: operandos insuficientes\n");
         return 0;
     }
-    p->data[++p->topo] = x;
-    return 1;
-}
 
-// Removendo pilha
-int pop(Pilha *p, int *out) {
-    if (p->topo == -1) {
-        return 0;
-    }
-    *out = p->data[p->topo--];
-    return 1;
-}
+    double resultado;
 
-// Verificar se é número
-int ehNumero(char *token) {
-    // Precisa implementar:
-    // - Verificar se o primeiro caractere é um dígito ou sinal de menos
-    // - Retornar 1 se for número, 0 se não
-    if (isdigit(token) == 0) {
-        return 0;
-    }
-    return 1;
-}
-
-//Executar operação
-int executarOperacao(Pilha *p, char operador) {
-    // - Precisa implementar:
-    // - Fazer pop de dois valores
-    // - Aplicar a operação (+, -, *, /)
-    // - Fazer push do resultado
-    // - Retornar 1 se sucesso, 0 se erro
-    
-}
-
-
-
-int main() {
-
-    Pilha pilha;
-    inicializarPilha(&pilha);
-
-    char entrada[100];
-    char *token;
-
-    pritnf("Digite a expressão NPR: \n");
-    fgets(entrada, 100, stdin);
-
-    token = strtok(entrada, " ");
-
-    while(token != NULL) {
-        if (ehNumero(token) == 0) {
-            switch(*token) {
-                case "+":
-                    pop()
+    switch (op) {
+        case '+':
+            resultado = p->Y + p->X;
+            break;
+        case '-':
+            resultado = p->Y - p->X;
+            break;
+        case '*':
+            resultado = p->Y * p->X;
+            break;
+        case '/':
+            if (p->X == 0) {
+                printf("Erro: divisao por zero\n");
+                return 0;
             }
-        }
+            resultado = p->Y / p->X;
+            break;
+        default:
+            printf("Erro: operador invalido (%c)\n", op);
+            return 0;
     }
 
+    p->X = resultado;
+    p->Y = p->Z;
+    p->Z = p->T;
 
+    p->topo--;
+
+    return 1;
+}
+
+// Valida se token é número
+int ehNumero(char *token) {
+    if (isdigit(token[0]) || 
+       (token[0] == '-' && isdigit(token[1]))) {
+        return 1;
+    }
     return 0;
 }
 
+int main() {
+
+    PilhaHP p;
+    char input[200];
+    inicializar(&p);
+
+    while (1) {
+
+
+        printf("\nDigite expressao RPN (ou 'sair'): ");
+        fgets(input, sizeof(input), stdin);
+
+        // Removendo \n
+        input[strcspn(input, "\n")] = 0;
+
+        //  Para sair da calculadora
+        if (strcmp(input, "sair") == 0) {
+            printf("Encerrando calculadora...\n");
+            break;
+        }
+
+        char *token = strtok(input, " ");
+
+        while (token != NULL) {
+
+            // Verificacap do numero
+            if (ehNumero(token)) {
+                double num = atof(token);
+                printf("\nEntrada: %s\n", token);
+                pushNumero(&p, num);
+                mostrar(&p);
+            }
+
+            // Verificacao do operador
+            else if (strlen(token) == 1 && strchr("+-*/", token[0])) {
+                printf("\nOperador: %c\n", token[0]);
+
+                if (!operar(&p, token[0])) {
+                    break;
+                }
+
+                mostrar(&p);
+            }
+
+            // Caso seja invalido
+            else {
+                printf("Erro: token invalido -> %s\n", token);
+                break;
+            }
+
+            token = strtok(NULL, " ");
+        }
+
+        printf("\n=================================\n");
+        printf("Resultado final: %.2lf\n", p.X);
+        printf("=================================\n");
+    }
+
+    return 0;
+}
