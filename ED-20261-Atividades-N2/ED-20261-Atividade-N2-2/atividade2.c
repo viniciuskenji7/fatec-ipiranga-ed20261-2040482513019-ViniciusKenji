@@ -1,63 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct No {
-    int valor;
-    int altura;
-    struct No *esq;
-    struct No *dir;
+struct Noh {
+    int dado;
+    int nivel;
+    struct Noh *ladoEsq;
+    struct Noh *ladoDir;
 };
 
-int maior(int a, int b) {
-    return (a > b) ? a : b;
+// Retorna o maior valor
+int compararMaior(int num1, int num2) {
+    return (num1 > num2) ? num1 : num2;
 }
 
-int calcularAltura(struct No* n) {
-    if (n == NULL) {
+// Calcula a altura dos nós
+int atualizarAltura(struct Noh* atual) {
+    if (atual == NULL) {
         return -1;
     }
-    int alturaEsq = calcularAltura(n->esq);
-    int alturaDir = calcularAltura(n->dir);
 
-    n->altura = 1 + maior(alturaEsq, alturaDir);
+    int alturaLadoEsq = atualizarAltura(atual->ladoEsq);
+    int alturaLadoDir = atualizarAltura(atual->ladoDir);
 
-    return n->altura;
+    atual->nivel = 1 + compararMaior(alturaLadoEsq, alturaLadoDir);
+
+    return atual->nivel;
 }
 
-int obterFB(struct No* n) {
-    if (n == NULL) {
+// Calcula o fator de balanceamento
+int calcularFB(struct Noh* atual) {
+    if (atual == NULL) {
         return 0;
     }
 
-    int alturaEsq = calcularAltura(n->esq);
-    int alturaDir = calcularAltura(n->dir);
+    int alturaLadoEsq = atualizarAltura(atual->ladoEsq);
+    int alturaLadoDir = atualizarAltura(atual->ladoDir);
 
-    return alturaEsq - alturaDir;
+    return alturaLadoEsq - alturaLadoDir;
 }
 
-struct No* criarNo(int valor) {
-    struct No* novo = (struct No*) malloc(sizeof(struct No));
+// Cria um novo nó
+struct Noh* novoElemento(int numero) {
+    struct Noh* elemento = (struct Noh*) malloc(sizeof(struct Noh));
 
-    novo->valor = valor;
-    novo->altura = 0;
-    novo->esq = NULL;
-    novo->dir = NULL;
+    elemento->dado = numero;
+    elemento->nivel = 0;
+    elemento->ladoEsq = NULL;
+    elemento->ladoDir = NULL;
 
-    return novo;
+    return elemento;
 }
 
 int main() {
 
-    struct No* raiz = criarNo(20);
-    raiz->esq = criarNo(10);
-    raiz->esq->esq = criarNo(5);
-    raiz->esq->esq->esq = criarNo(2);
+    struct Noh* topo = novoElemento(20);
+    topo->ladoEsq = novoElemento(10);
+    topo->ladoEsq->ladoEsq = novoElemento(5);
+    topo->ladoEsq->ladoEsq->ladoEsq = novoElemento(2);
 
-    int alturaRaiz = calcularAltura(raiz);
-    int fbRaiz = obterFB(raiz);
+    int alturaTopo = atualizarAltura(topo);
+    int fbTopo = calcularFB(topo);
 
-    printf("Altura da raiz (%d): %d\n", raiz->valor, alturaRaiz);
-    printf("Fator de Balanceamento da raiz (%d): %d\n", raiz->valor, fbRaiz);
+    printf("Altura da raiz (%d): %d\n", topo->dado, alturaTopo);
+    printf("Fator de Balanceamento da raiz (%d): %d\n", topo->dado, fbTopo);
 
     return 0;
 }
