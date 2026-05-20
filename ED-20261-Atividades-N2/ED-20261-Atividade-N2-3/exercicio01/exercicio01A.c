@@ -1,4 +1,4 @@
-
+// RA: 2040482513019 - Vinicius Kenji dos Santos Enoki
 #include <stdio.h>
 
 
@@ -17,10 +17,11 @@ int main() {
     int x = 10;
     int y = 20;
 
-
+    printf("Endereco x = %p, Endereco y = %p\n", x, y);
     printf("Antes: x = %d, y = %d\n", x, y);
     trocar(&x, &y);
     printf("Depois: x = %d, y = %d\n", x, y);
+    printf("Endereco x = %p, Endereco y = %p\n", x, y);
 
     return 0;
 }
