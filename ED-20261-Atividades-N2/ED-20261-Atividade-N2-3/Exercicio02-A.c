@@ -46,14 +46,19 @@ void encontrarExtremos(float *vet, int n, float *maior, float *menor) {
 }
 
 void normalizar(float *vet, int n) {
-    float normalizado;
-    for (int i = 0; i < n; i++) {
-        normalizado = *vet / n;
-        *vet = normalizado;
-        vet++;
+    float maior = *vet;
+    float *tmp = vet;
+    int i;
+
+    // acha o maior valor primeiro
+    for (i = 0; i < n; i++) {
+        if (*(tmp + i) > maior)
+            maior = *(tmp + i);
     }
-    printf("Vetor normalizado: \n");
-    for(int i = 0; i < n; i++) {
+
+    printf("Vetor normalizado:\n");
+    for (i = 0; i < n; i++) {
+        *vet = *vet / maior;
         printf("%.2f\n", *vet);
         vet++;
     }

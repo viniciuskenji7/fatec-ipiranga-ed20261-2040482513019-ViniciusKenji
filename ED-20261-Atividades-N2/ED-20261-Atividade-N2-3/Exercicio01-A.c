@@ -20,6 +20,7 @@ int main() {
     // Utilizando esse (void *) para indicar que estou printando um endereço de memoria e nao um integer normal
     printf("Endereco x = %p, Endereco y = %p\n", (void *)&x, (void *)&y);
     printf("Antes: x = %d, y = %d\n", x, y);
+    // Passando os endereços para a troca
     trocar(&x, &y);
     printf("Depois: x = %d, y = %d\n", x, y);
     printf("Endereco x = %p, Endereco y = %p\n", (void *)&x, (void *)&y);
